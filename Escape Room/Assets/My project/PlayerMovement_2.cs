@@ -13,7 +13,6 @@ public class PlayerMovement_2 : MonoBehaviour
     private Vector3 m_Movement;
 
     public Camera m_Camera;
-
     private GameObject m_ClickedTarget;
     private GameObject m_WatchingTarget;
     private Vector3 ScreenCenter;
@@ -27,12 +26,15 @@ public class PlayerMovement_2 : MonoBehaviour
     private bool haveItem = false;
     private bool watchingItem = false;
     private GameObject m_HavingItem;
+    private Rigidbody m_RigidBody;
+    public Vector3 Velocity;
     void Start()
     {
         m_LeftSharingan = transform.Find("eyes").Find("left").gameObject;
         m_RightSharingan = transform.Find("eyes").Find("right").gameObject;
         ScreenCenter = new Vector3(m_Camera.pixelWidth / 2, m_Camera.pixelHeight / 2);
         currentFoV = m_Camera.fieldOfView;
+        m_RigidBody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -229,7 +231,7 @@ public class PlayerMovement_2 : MonoBehaviour
         if (m_ActivingRightSharingan)
         {
             m_RightSharingan.transform.localRotation *= Quaternion.Euler(0, 0, 0.8f);
-        }
+        }        
     }
 
     void Move()
@@ -237,13 +239,16 @@ public class PlayerMovement_2 : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        m_Movement.Set(horizontal, 0f, vertical);
-        m_Movement.Normalize();
+        Vector3 move_horizontal = transform.right * horizontal;
+        Vector3 move_vertival = transform.forward * vertical;
+        Velocity = (move_horizontal + move_vertival).normalized * moveSpeed;
+        
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            m_Movement *= runWeight;
+            Velocity *= runWeight;
         }
-        transform.Translate(m_Movement * moveSpeed * Time.deltaTime);
+        m_RigidBody.MovePosition(transform.position + Velocity * Time.deltaTime);
+        //transform.Translate(m_Movement * moveSpeed * Time.deltaTime);
         
     }
 
@@ -254,7 +259,7 @@ public class PlayerMovement_2 : MonoBehaviour
             if (!m_Jumping)
             {
                 //transform.Translate((transform.position + new Vector3(0, 1 * jumpPower, 0)) * Time.deltaTime);
-                GetComponent<Rigidbody>().AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+                m_RigidBody.velocity = transform.up * jumpPower;
                 m_Jumping = true;
                 
             }
