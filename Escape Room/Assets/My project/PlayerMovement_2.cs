@@ -13,6 +13,7 @@ public class PlayerMovement_2 : MonoBehaviour
     private Vector3 m_Movement;
 
     public Camera m_Camera;
+    public GameObject m_Cursor;
     private GameObject m_ClickedTarget;
     private GameObject m_WatchingTarget;
     private Vector3 ScreenCenter;
@@ -28,6 +29,7 @@ public class PlayerMovement_2 : MonoBehaviour
     private GameObject m_HavingItem;
     private Rigidbody m_RigidBody;
     public Vector3 Velocity;
+    
     void Start()
     {
         m_LeftSharingan = transform.Find("eyes").Find("left").gameObject;
@@ -177,9 +179,8 @@ public class PlayerMovement_2 : MonoBehaviour
                     //transform.localEulerAngles = new Vector3(0, 0, 0);
                     m_Camera.transform.localEulerAngles = new Vector3(0, 0f, 0f);
                     transform.GetChild(transform.childCount - 1).localPosition = new Vector3(0f, 0, 1.5f);
-                    m_Camera.transform.GetChild(0).transform.localScale = new Vector3(0, 0, 0);
                     StartCoroutine(RotateItem(transform.GetChild(transform.childCount - 1).gameObject));
-                    
+                    m_Cursor.SetActive(false);
                     
                 }
                 else
@@ -187,7 +188,7 @@ public class PlayerMovement_2 : MonoBehaviour
                     transform.GetChild(transform.childCount - 1).localPosition = new Vector3(0f, -0.5f, 1.2f);
                     transform.GetChild(transform.childCount - 1).localEulerAngles = new Vector3(-40f, 0, 0);
                     m_Camera.fieldOfView = currentFoV;
-                    m_Camera.transform.GetChild(0).transform.localScale = new Vector3(1, 1, 1);
+                    m_Cursor.SetActive(true);
                 }
             }
         }
